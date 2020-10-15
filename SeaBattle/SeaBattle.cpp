@@ -3,11 +3,18 @@
 #include <ctime>
 #include <stdlib.h>
 #include <clocale>
+#include <windows.h>
+#include <math.h>
+
 using namespace std;
 
-const int SIZE = 10;
+const int SZ = 10;
 
-void setShipRandom(int map[SIZE][SIZE], int sizeShip, int numShips)
+int shipsId = 1;
+
+int ships[10] = {0};
+
+void setShipRandom(int map[SZ][SZ], int sizeShip, int numShips)
 {
 	int x, y;
 	int dir = 0;
@@ -20,8 +27,8 @@ void setShipRandom(int map[SIZE][SIZE], int sizeShip, int numShips)
 		if (countTact > 1000)
 			break;
 
-		x = rand() % SIZE;
-		y = rand() % SIZE;
+		x = rand() % SZ;
+		y = rand() % SZ;
 
 		int temp_x = x;
 		int temp_y = y;
@@ -32,21 +39,21 @@ void setShipRandom(int map[SIZE][SIZE], int sizeShip, int numShips)
 
 		for (int i = 0; i < sizeShip; i++)
 		{
-			if (x < 0 || y < 0 || x >= SIZE || y >= SIZE)
+			if (x < 0 || y < 0 || x >= SZ || y >= SZ)
 			{
 				settinIsPossible = 0;
 				break;
 			}
 
-			if (map[x][y] == 1 ||
-				map[x][y + 1] == 1 ||
-				map[x][y - 1] == 1 ||
-				map[x + 1][y] == 1 ||
-				map[x + 1][y + 1] == 1 ||
-				map[x + 1][y - 1] == 1 ||
-				map[x - 1][y] == 1 ||
-				map[x - 1][y + 1] == 1 ||
-				map[x - 1][y - 1] == 1)
+			if (map[x][y] >= 1 ||
+				map[x][y + 1] >= 1 ||
+				map[x][y - 1] >= 1 ||
+				map[x + 1][y] >= 1 ||
+				map[x + 1][y + 1] >= 1 ||
+				map[x + 1][y - 1] >= 1 ||
+				map[x - 1][y] >= 1 ||
+				map[x - 1][y + 1] >= 1 ||
+				map[x - 1][y - 1] >= 1)
 			{
 				settinIsPossible = 0;
 				break;
@@ -75,7 +82,8 @@ void setShipRandom(int map[SIZE][SIZE], int sizeShip, int numShips)
 
 			for (int i = 0; i < sizeShip; i++)
 			{
-				map[x][y] = 1;
+				map[x][y] = shipsId;
+
 				switch (dir)
 				{
 				case 0:
@@ -92,84 +100,126 @@ void setShipRandom(int map[SIZE][SIZE], int sizeShip, int numShips)
 					break;
 				}
 			}
+			ships[shipsId] = sizeShip;
+			shipsId++;
 			countShip++;
 		}
 	}
 }
 
+void mapShow(int map[SZ][SZ], int mask[SZ][SZ])
+{
+	cout << ' ';
+	for (int i = 0; i < SZ; i++)
+	{
+		cout << i;
+	}
 
+	cout << endl;
 
-int main() 
+	for (int i = 0; i < SZ; i++)
+	{
+		cout << i;
+		for (int j = 0; j < SZ; j++)
+		{
+			if (mask[j][i] == 1)
+			{
+				if (map[j][i] == 0)
+				{
+					cout << '-';
+				}
+				else if (map[j][i] == -1)
+				{
+					cout << 'X';
+				}
+					
+				else
+				{
+					cout << map[j][i];
+				}
+			}
+			else
+			{
+				cout << ' ';
+			} 
+		}
+		cout << endl;
+	}
+}
+
+int main()
+
 {
 
 	setlocale(LC_CTYPE, "Russian");
 	
-	int map[SIZE][SIZE] = {0};
+	int map[SZ][SZ] = {0};
+	int mask[SZ][SZ] = {0};
 
 	setShipRandom(map, 4, 1);
 	setShipRandom(map, 3, 2);
 	setShipRandom(map, 2, 3);
 	setShipRandom(map, 1, 4);
 
-	for (int i = 0; i < SIZE; i++)
-	{
-		for (int j = 0; j < SIZE; j++)
-		{
-			if (map[i][j] == 0)
-			{
-				cout << '-';
-			}
-			else
-			{
-				cout << map[i][j];
-			}
-		}
-		cout << endl;
-	}
-
+	
+	int x, y;
 	while (true)
 	{
-		int x, y;
-		cout << endl;
+
+		mapShow(map, mask);
+		
 		cout << "Введите коардинаты цела: " << endl;
 		cin >> x;
 		cin >> y;
 
-		if (map[x][y] == 1)
+		if (map[x][y] >= 1)
 		{
-			cout << "Попал" << endl;
-			map[x][y] = 3;
-
-			for (int i = 0; i < SIZE; i++)
+			ships[map[x][y]]--;
+			
+			if (ships[map[x][y]] <= 0)
 			{
-				for (int j = 0; j < SIZE; j++)
-				{
-					cout << map[i][j];
-				}
-				cout << endl;
+				cout << "Потоплен" << endl;
 			}
+			else
+			{
+				cout << "Поврежден" << endl;
+			}
+				
+			map[x][y] = -1;
 
 			bool detectShip = false;
 
-			for (int i = 0; i < SIZE; i++)
+			for (int i = 0; i < SZ; i++)
 			{
-				for (int j = 0; j < SIZE; j++)
+				for (int j = 0; j < SZ; j++)
 				{
-					if (map[i][j] == 1)
+					if (map[i][j] >= 1)
 					{
 						detectShip = true;
 					}
 				}
 			}
+
 			if (detectShip == false) 
 			{
 				cout << "Вы победили!" << endl;
 				break;
 			}
 		}
-		else
-			cout << "Промах" << endl;
-	}
 
+		else 
+		{
+			cout << "Промах" << endl;
+		}
+			
+		
+		mask[x][y] = 1;
+		
+		Sleep(1000);
+		system("cls");
+		_getch();
+	}
+	system("pause");
+	return 0;
 	
 }
