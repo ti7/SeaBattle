@@ -357,19 +357,16 @@ void mapShow(int map[SZ][SZ], int mask[SZ][SZ])
 int main()
 
 {
-
 	setlocale(LC_CTYPE, "Russian");
 	
 	int map[SZ][SZ] = {0};
 	int mask[SZ][SZ] = {0};
 
-	/*setShipRandom(map, 4, 1);
+	/*setShipRandom(map, 4, 1); 
 	setShipRandom(map, 3, 2);
 	setShipRandom(map, 2, 3);
 	setShipRandom(map, 1, 4);*/
-
-
-	
+			
 	int x = 0, y = 0;
 	int dir = 1;
 	int sizeShip = 4;
@@ -424,7 +421,6 @@ int main()
 		
 	}
 
-
 	while (true)
 	{
 
@@ -473,8 +469,7 @@ int main()
 		{
 			cout << "Промах" << endl;
 		}
-			
-		
+				
 		mask[x][y] = 1;
 		
 		Sleep(1000);
