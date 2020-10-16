@@ -423,7 +423,6 @@ int main()
 
 	while (true)
 	{
-
 		mapShow(map, mask);
 		
 		cout << "Введите коардинаты цела: " << endl;
@@ -475,7 +474,6 @@ int main()
 		Sleep(1000);
 		system("cls");
 		_getch();
-		
 	}
 	system("pause");
 	return 0;
